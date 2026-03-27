@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.dmsexcavation.com)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(node -e \"const http = require\\(''http''\\); console.log\\(''node works''\\)\")"
+    ]
+  }
+}
