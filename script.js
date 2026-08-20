@@ -52,27 +52,52 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // ===== Contact form handling =====
 const contactForm = document.getElementById('contactForm');
 
-contactForm.addEventListener('submit', (e) => {
+contactForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const formData = new FormData(contactForm);
   const data = Object.fromEntries(formData);
+  const serviceSelect = contactForm.querySelector('select[name="service"]');
+  const serviceLabel = serviceSelect.selectedOptions[0] ? serviceSelect.selectedOptions[0].textContent : '';
 
-  // Show a simple confirmation (replace with actual form submission later)
   const btn = contactForm.querySelector('button[type="submit"]');
   const originalText = btn.textContent;
-  btn.textContent = 'Message Sent!';
-  btn.style.backgroundColor = '#28a745';
-  btn.style.borderColor = '#28a745';
+  btn.textContent = 'Sending...';
   btn.disabled = true;
+
+  try {
+    const res = await fetch('https://formsubmit.co/ajax/seannbookmyer@gmail.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: 'New estimate request from the Bookmyer Excavating website',
+        _template: 'table',
+        _replyto: data.email || '',
+        Name: data.name,
+        Phone: data.phone,
+        Email: data.email || '(not provided)',
+        Service: serviceLabel || '(not selected)',
+        Message: data.message || '(no message)',
+      }),
+    });
+    if (!res.ok) throw new Error('Request failed');
+
+    btn.textContent = 'Message Sent!';
+    btn.style.backgroundColor = '#28a745';
+    btn.style.borderColor = '#28a745';
+    contactForm.reset();
+  } catch (err) {
+    btn.textContent = 'Error — please call (717) 804-7133';
+    btn.style.backgroundColor = '#c0392b';
+    btn.style.borderColor = '#c0392b';
+  }
 
   setTimeout(() => {
     btn.textContent = originalText;
     btn.style.backgroundColor = '';
     btn.style.borderColor = '';
     btn.disabled = false;
-    contactForm.reset();
-  }, 3000);
+  }, 4000);
 });
 
 // ===== Gallery Lightbox =====
